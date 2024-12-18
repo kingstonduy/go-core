@@ -1,110 +1,134 @@
 package logger
 
-import (
-	"context"
-	"strings"
-)
+import "context"
 
-// Logger interface definition
-type ILogger interface {
-	Debug(ctx context.Context, args ...interface{})
-	Debugf(ctx context.Context, format string, args ...interface{})
-	Info(ctx context.Context, args ...interface{})
-	Infof(ctx context.Context, format string, args ...interface{})
-	Warn(ctx context.Context, args ...interface{})
-	Warnf(ctx context.Context, format string, args ...interface{})
-	Error(ctx context.Context, args ...interface{})
-	Errorf(ctx context.Context, format string, args ...interface{})
-	Fatal(ctx context.Context, args ...interface{})
-	Fatalf(ctx context.Context, format string, args ...interface{})
-	Fields(fields map[string]interface{}) ILogger
+type Logger interface {
+	// Init initializes options
+	Init(options ...Option) error
+	// The Logger options
+	Options() Options
+	// Fields set fields to always be logged
+	Fields(fields map[string]interface{}) Logger
+
 	// Log writes a log entry
 	Log(ctx context.Context, level Level, args ...interface{})
 	// Logf writes a formatted log entry
 	Logf(ctx context.Context, level Level, format string, args ...interface{})
+	// Log Trace
+	Trace(ctx context.Context, args ...interface{})
+	// Logf Trace
+	Tracef(ctx context.Context, format string, args ...interface{})
+	// Log Debug
+	Debug(ctx context.Context, args ...interface{})
+	// Logf Debug
+	Debugf(ctx context.Context, format string, args ...interface{})
+	// Log Info
+	Info(ctx context.Context, args ...interface{})
+	// Logf Info
+	Infof(ctx context.Context, format string, args ...interface{})
+	// Log Warn
+	Warn(ctx context.Context, args ...interface{})
+	// Logf Warn
+	Warnf(ctx context.Context, format string, args ...interface{})
+	// Log Error
+	Error(ctx context.Context, args ...interface{})
+	// Logf Error
+	Errorf(ctx context.Context, format string, args ...interface{})
+	// Log Fatal
+	Fatal(ctx context.Context, args ...interface{})
+	// Logf Fatal
+	Fatalf(ctx context.Context, format string, args ...interface{})
+
+	// String returns the name of logger
+	String() string
 }
 
-var defaultLogger ILogger
-
-func GetDefaulLogger() ILogger {
-	if defaultLogger == nil {
-		defaultLogger = newDefaultLogger()
-	}
-	return defaultLogger
-}
-func InitLogger(logger ILogger) {
-	defaultLogger = logger
+func SetDefaultLogger(log Logger) {
+	DefaultLogger = log
 }
 
-func Fields(fields map[string]interface{}) ILogger {
-	return defaultLogger.Fields(fields)
+// Default
+var (
+	DefaultLogger               = newNoopsLogger()
+	DefaultEnvLogLevel          = "LOG_LEVEL"
+	DefaultLogLevel             = InfoLevel
+	DefaultLogLevelString       = "info"
+	DefaultMaskSensitiveLogData = true
+	DefaultCallerSkipCount      = 7
+	DefaultTimestampFormat      = "2006-01-02 15:04:05.000"
+)
+
+// Return DefaultLogger with given fields
+func Fields(fields map[string]interface{}) Logger {
+	return DefaultLogger.Fields(fields)
 }
 
-// Info logs an informational message
-func Info(ctx context.Context, args ...interface{}) {
-	defaultLogger.Info(ctx, args...)
+// Log writes a log entry
+func Log(ctx context.Context, level Level, args ...interface{}) {
+	DefaultLogger.Log(ctx, level, args...)
 }
 
-// Infof logs a formatted informational message
-func Infof(ctx context.Context, format string, args ...interface{}) {
-	defaultLogger.Infof(ctx, format, args...)
+// Logf writes a formatted log entry
+func Logf(ctx context.Context, level Level, format string, args ...interface{}) {
+	DefaultLogger.Logf(ctx, level, format, args...)
 }
 
-// Debug logs a debug message
+// Log Trace
+func Trace(ctx context.Context, args ...interface{}) {
+	DefaultLogger.Trace(ctx, args...)
+}
+
+// Logf Trace
+func Tracef(ctx context.Context, format string, args ...interface{}) {
+	DefaultLogger.Tracef(ctx, format, args...)
+}
+
+// Log Debug
 func Debug(ctx context.Context, args ...interface{}) {
-	defaultLogger.Debug(ctx, args...)
+	DefaultLogger.Debug(ctx, args...)
 }
 
-// Debugf logs a formatted debug message
+// Logf Debug
 func Debugf(ctx context.Context, format string, args ...interface{}) {
-	defaultLogger.Debugf(ctx, format, args...)
+	DefaultLogger.Debugf(ctx, format, args...)
 }
 
-// Warn logs a warning message
+// Log Info
+func Info(ctx context.Context, args ...interface{}) {
+	DefaultLogger.Info(ctx, args...)
+}
+
+// Logf Info
+func Infof(ctx context.Context, format string, args ...interface{}) {
+	DefaultLogger.Infof(ctx, format, args...)
+}
+
+// Log Warn
 func Warn(ctx context.Context, args ...interface{}) {
-	defaultLogger.Warn(ctx, args...)
+	DefaultLogger.Warn(ctx, args...)
 }
 
-// Warnf logs a formatted warning message
+// Logf Warn
 func Warnf(ctx context.Context, format string, args ...interface{}) {
-	defaultLogger.Warnf(ctx, format, args...)
+	DefaultLogger.Warnf(ctx, format, args...)
 }
 
-// Error logs an error message
+// Log Error
 func Error(ctx context.Context, args ...interface{}) {
-	defaultLogger.Error(ctx, args...)
+	DefaultLogger.Error(ctx, args...)
 }
 
-// Errorf logs a formatted error message
+// Logf Error
 func Errorf(ctx context.Context, format string, args ...interface{}) {
-	defaultLogger.Errorf(ctx, format, args...)
+	DefaultLogger.Errorf(ctx, format, args...)
 }
 
-// Fatal logs a fatal message and exits the program
+// Log Fatal
 func Fatal(ctx context.Context, args ...interface{}) {
-	defaultLogger.Fatal(ctx, args...)
+	DefaultLogger.Fatal(ctx, args...)
 }
 
-// Fatalf logs a formatted fatal message and exits the program
+// Logf Fatal
 func Fatalf(ctx context.Context, format string, args ...interface{}) {
-	defaultLogger.Fatalf(ctx, format, args...)
-}
-
-func GetColor(level string) string {
-	var color string
-	switch strings.ToUpper(level) {
-	case "DEBUG":
-		color = "\033[37m" // Gray
-	case "INFO":
-		color = "\033[32m" // Green
-	case "WARN":
-		color = "\033[33m" // Yellow
-	case "ERROR":
-		color = "\033[31m" // Red
-	case "FATAL":
-		color = "\033[35m" // Magenta
-	default:
-		color = "\033[0m" // Default color (reset)
-	}
-	return color
+	DefaultLogger.Fatalf(ctx, format, args...)
 }

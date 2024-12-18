@@ -14,13 +14,13 @@ var (
 type queryBeginTimeKey struct{}
 
 type dbLogHooksOptions struct {
-	logger          logger.ILogger
+	logger          logger.Logger
 	warningDuration time.Duration
 }
 
 type DbLogHooksOption func(*dbLogHooksOptions)
 
-func WithLogHooksLogger(logger logger.ILogger) DbLogHooksOption {
+func WithLogHooksLogger(logger logger.Logger) DbLogHooksOption {
 	return func(options *dbLogHooksOptions) {
 		options.logger = logger
 	}
@@ -44,7 +44,7 @@ func newDBLogHooksOptions(opts ...DbLogHooksOption) dbLogHooksOptions {
 }
 
 type DbLogHooks struct {
-	Logger           logger.ILogger
+	Logger           logger.Logger
 	warningThreshold time.Duration
 }
 
@@ -78,11 +78,11 @@ func (d *DbLogHooks) log(ctx context.Context, level logger.Level, message string
 	logger.Logf(ctx, level, message, args...)
 }
 
-func (d *DbLogHooks) getLogger() logger.ILogger {
+func (d *DbLogHooks) getLogger() logger.Logger {
 	if d.logEnabled() {
 		return d.Logger
 	}
-	return logger.GetDefaulLogger()
+	return logger.DefaultLogger
 }
 
 func (d *DbLogHooks) logEnabled() bool {

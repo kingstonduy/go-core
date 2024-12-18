@@ -17,9 +17,12 @@ type SqlxDB struct {
 
 func NewSqlxGdbc(driverName string, dsn string, opts ...database.DatabaseOption) (*database.Gdbc, error) {
 
-	db := otelsqlx.MustConnect(driverName, dsn)
+	db, err := otelsqlx.Connect(driverName, dsn)
+	if err != nil {
+		return nil, err
+	}
 
-	err := db.Ping()
+	err = db.Ping()
 	if err != nil {
 		if db != nil {
 			err = db.Close()
@@ -109,10 +112,10 @@ func (sdt *SqlxDB) WithinTransaction(ctx context.Context, txFunc func(ctx contex
 
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback()
+			tx.Rollback() //nolint
 			panic(p)
 		} else if err != nil {
-			tx.Rollback()
+			tx.Rollback() //nolint
 		} else {
 			err = tx.Commit()
 		}
@@ -171,10 +174,10 @@ func (sct *SqlxTx) WithinTransaction(ctx context.Context, txFunc func(ctx contex
 	tx := sct.db
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback()
+			tx.Rollback() //nolint
 			panic(p)
 		} else if err != nil {
-			tx.Rollback()
+			tx.Rollback() //nolint
 		} else {
 			err = tx.Commit()
 		}

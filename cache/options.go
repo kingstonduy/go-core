@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/logger"
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/logger/logrus"
+	"github.com/kingstonduy/go-core/logger"
+	"github.com/kingstonduy/go-core/logger/logrus"
 )
 
 type Options struct {

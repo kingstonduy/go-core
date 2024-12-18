@@ -3,7 +3,7 @@ package credis
 import (
 	"context"
 
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/cache"
+	"github.com/kingstonduy/go-core/cache"
 	"github.com/redis/go-redis/v9"
 )
 

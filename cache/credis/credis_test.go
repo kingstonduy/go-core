@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/cache"
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/trace"
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/trace/otel"
+	"github.com/kingstonduy/go-core/cache"
+	"github.com/kingstonduy/go-core/trace"
+	"github.com/kingstonduy/go-core/trace/otel"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )

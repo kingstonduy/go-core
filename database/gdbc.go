@@ -32,7 +32,7 @@ type Gdbc struct {
 func (g *Gdbc) Exec(ctx context.Context, query string, args ...interface{}) (res sql.Result, err error) {
 	ctx, _ = g.beforeHook(ctx, query, args...)
 	defer func() {
-		g.afterHook(ctx, err, query, args...)
+		g.afterHook(ctx, err, query, args...) //nolint
 	}()
 
 	return g.getConnection(ctx).Exec(ctx, query, args...)
@@ -42,7 +42,7 @@ func (g *Gdbc) Exec(ctx context.Context, query string, args ...interface{}) (res
 func (g *Gdbc) Get(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
 	ctx, _ = g.beforeHook(ctx, query, args...)
 	defer func() {
-		g.afterHook(ctx, err, query, args...)
+		g.afterHook(ctx, err, query, args...) //nolint
 	}()
 
 	return g.getConnection(ctx).Get(ctx, dest, query, args...)
@@ -57,7 +57,7 @@ func (g *Gdbc) Prepare(ctx context.Context, query string) (*sql.Stmt, error) {
 func (g *Gdbc) Query(ctx context.Context, query string, args ...interface{}) (rows *sql.Rows, err error) {
 	ctx, _ = g.beforeHook(ctx, query, args...)
 	defer func() {
-		g.afterHook(ctx, err, query, args...)
+		g.afterHook(ctx, err, query, args...) //nolint
 	}()
 
 	return g.getConnection(ctx).Query(ctx, query, args...)
@@ -67,7 +67,7 @@ func (g *Gdbc) Query(ctx context.Context, query string, args ...interface{}) (ro
 func (g *Gdbc) QueryRow(ctx context.Context, query string, args ...interface{}) (row *sql.Row) {
 	ctx, _ = g.beforeHook(ctx, query, args...)
 	defer func() {
-		g.afterHook(ctx, nil, query, args...)
+		g.afterHook(ctx, nil, query, args...) //nolint
 	}()
 
 	return g.getConnection(ctx).QueryRow(ctx, query, args...)
@@ -77,7 +77,7 @@ func (g *Gdbc) QueryRow(ctx context.Context, query string, args ...interface{}) 
 func (g *Gdbc) Select(ctx context.Context, dest interface{}, query string, args ...interface{}) (err error) {
 	ctx, _ = g.beforeHook(ctx, query, args...)
 	defer func() {
-		g.afterHook(ctx, err, query, args...)
+		g.afterHook(ctx, err, query, args...) //nolint
 	}()
 
 	return g.getConnection(ctx).Select(ctx, dest, query, args...)

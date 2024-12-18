@@ -24,7 +24,7 @@ func getConnection(t *testing.T) *database.Gdbc {
 	)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
 	}
 
 	return gdbc
@@ -42,7 +42,7 @@ func getConnectionWithLoggingHooks(t *testing.T) *database.Gdbc {
 	)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
 	}
 
 	return gdbc
@@ -58,14 +58,14 @@ func TestTransaction(t *testing.T) {
 
 	_, err := gdbc.Exec(ctx, "TRUNCATE TABLE product ")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
 	}
 
-	gdbc.WithinTransaction(ctx, func(ctx context.Context) error {
+	_ = gdbc.WithinTransaction(ctx, func(ctx context.Context) error {
 		for i := 1; i <= 1; i++ {
 			_, err := gdbc.Exec(ctx, "INSERT INTO product (id, name) VALUES ($1, $2)", i, "name")
 			if err != nil {
-				t.Fatalf(err.Error())
+				t.Error(err)
 			}
 			if i == 5 {
 				return fmt.Errorf("Error from transaction ")
@@ -136,7 +136,7 @@ func TestTruncateTable(t *testing.T) {
 	_, err := gdbc.Exec(context.Background(), "TRUNCATE TABLE product")
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
 	}
 
 	var count int64

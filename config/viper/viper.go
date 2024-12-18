@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/kingstonduy/go-core/config"
+
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
@@ -85,7 +86,7 @@ func (c *ViperConfig) bindEnvs(iface interface{}, parts ...string) {
 		case reflect.Struct:
 			c.bindEnvs(v.Interface(), append(parts, tv)...)
 		default:
-			vi.BindEnv(strings.Join(append(parts, tv), "."))
+			vi.BindEnv(strings.Join(append(parts, tv), ".")) //nolint
 		}
 	}
 }

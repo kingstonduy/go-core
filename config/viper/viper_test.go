@@ -32,7 +32,7 @@ func TestGetConfigureWithEnvFileKey(t *testing.T) {
 	)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
 	}
 
 	assert.NotNil(t, c)

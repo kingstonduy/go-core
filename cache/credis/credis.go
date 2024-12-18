@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/cache"
-	"10.96.24.141/UDTN/integration/microservices/mcs-go/mcs-go-modules/mcs-go-core.git/logger"
+	"github.com/kingstonduy/go-core/cache"
+	"github.com/kingstonduy/go-core/logger"
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
 )
@@ -152,14 +152,14 @@ func (r *redisCacheClient) String() string {
 	return "redis"
 }
 
-func (r *redisCacheClient) log(ctx context.Context, level logger.Level, message string, args ...interface{}) {
-	if !r.logEnabled() {
-		return
-	}
-	logger := r.opts.Logger
-	logger.Logf(ctx, level, message, args...)
-}
+// func (r *redisCacheClient) log(ctx context.Context, level logger.Level, message string, args ...interface{}) {
+// 	log := r.opts.Logger
+// 	if log == nil {
+// 		log = logger.DefaultLogger
+// 	}
+// 	log.Logf(ctx, level, message, args...)
+// }
 
-func (r *redisCacheClient) logEnabled() bool {
-	return r.opts.Logger != nil
-}
+// func (r *redisCacheClient) logEnabled() bool {
+// 	return r.opts.Logger != nil
+// }

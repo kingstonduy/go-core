@@ -47,7 +47,7 @@ type DatabaseOptions struct {
 	MaxOpen      int           // <= 0 means unlimited
 	MaxLifetime  time.Duration // maximum amount of time a connection may be reused
 	MaxIdleTime  time.Duration // maximum amount of time a connection may be idle before being closed
-	Logger       logger.ILogger
+	Logger       logger.Logger
 	Hooks        Hooks
 }
 
@@ -77,7 +77,7 @@ func WithMaxIdleTime(time time.Duration) DatabaseOption {
 	}
 }
 
-func WithLogger(logger logger.ILogger) DatabaseOption {
+func WithLogger(logger logger.Logger) DatabaseOption {
 	return func(options *DatabaseOptions) {
 		options.Logger = logger
 	}
