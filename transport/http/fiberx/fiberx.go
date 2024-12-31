@@ -10,12 +10,12 @@ import (
 	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/contrib/otelfiber/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	fiberLog "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/rewrite"
 	"github.com/gofiber/swagger"
-	"github.com/kingstonduy/go-core/errorx"
 	"github.com/kingstonduy/go-core/logger"
 	"github.com/kingstonduy/go-core/metadata"
 	"github.com/kingstonduy/go-core/metrics"
@@ -332,6 +332,12 @@ func NewFiberApp(opts ...FiberAppOption) *FiberApp {
 		Options: options,
 	}
 
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // Specify allowed methods
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
+
 	// Handle global panic
 	if app.Options.RecoverHandlerEnabled {
 		app.Use(NewRecoverHandler())
@@ -441,22 +447,22 @@ func NewFiberApp(opts ...FiberAppOption) *FiberApp {
 	}
 
 	// Validate base request format
-	if app.Options.BaseRequestBodyValidationEnabled {
-		fiberApp.Use(func(ctx *fiber.Ctx) error {
-			var req transport.Request[any]
-			err := ctx.BodyParser(&req)
-			if err != nil {
-				return errorx.BadRequestError("Failed to parse request: Invalid base request format. %v", err)
-			}
+	// if app.Options.BaseRequestBodyValidationEnabled {
+	// 	fiberApp.Use(func(ctx *fiber.Ctx) error {
+	// 		var req transport.Request[any]
+	// 		err := ctx.BodyParser(&req)
+	// 		if err != nil {
+	// 			return errorx.BadRequestError("Failed to parse request: Invalid base request format. %v", err)
+	// 		}
 
-			err = app.getValidator().Validate(req)
-			if err != nil {
-				return err
-			}
+	// 		err = app.getValidator().Validate(req)
+	// 		if err != nil {
+	// 			return err
+	// 		}
 
-			return ctx.Next()
-		})
-	}
+	// 		return ctx.Next()
+	// 	})
+	// }
 
 	// Hooks
 	// Register route hook to print routes registered with fiber app
