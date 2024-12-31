@@ -312,7 +312,6 @@ type MessageHandler interface {
 
 // Start monitoring a request based on the given options, and return a context with some tracing data
 func MonitorCommand(ctx context.Context, data MonitorRequestData, opts ...MonitorRequestOption) context.Context {
-
 	// tracing
 
 	systemId := data.SystemID
@@ -346,4 +345,19 @@ func MonitorCommand(ctx context.Context, data MonitorRequestData, opts ...Monito
 	ctx = context.WithValue(ctx, trace.SpanInfoKey{}, *spanInfo)
 
 	return ctx
+}
+
+func GetHttpRequestHeaderByCtx(ctx context.Context, opts ...ResponseOption) map[string]string {
+	options := ResponseOptions{}
+
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	if tracer := getResponseTracer(options.Tracer); tracer != nil {
+		spanInfo := tracer.ExtractSpanInfo(ctx)
+		return spanInfo.RequestHeaders
+	}
+
+	return map[string]string{}
 }
