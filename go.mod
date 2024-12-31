@@ -10,8 +10,9 @@ require (
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/gofiber/contrib/otelfiber/v2 v2.0.0
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/swagger v1.0.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/strftime v1.0.6

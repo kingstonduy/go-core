@@ -2,6 +2,7 @@ package fiberx
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"reflect"
 	"time"
@@ -72,6 +73,11 @@ func RequestHandler[TReq any, TResp any](ctx *fiber.Ctx, opts ...RequestHandlerO
 
 type RequestHandlerOptions struct {
 	OnRequestHandledFunc func(ctx context.Context, res interface{})
+	PreHandlerEnable     bool
+	PreHandlerFunc       func(ctx *fiber.Ctx)
+	PostHandlerFunc      func(ctx *fiber.Ctx, b []byte)
+	PostHandlerEnable    bool
+	VerifyTokenEnable    bool
 }
 
 type RequestHandlerOption func(*RequestHandlerOptions)
@@ -86,6 +92,26 @@ func NewRequestHandlerOptions(opts ...RequestHandlerOption) *RequestHandlerOptio
 	return &options
 }
 
+func WithPreHandlerFunc(f func(ctx *fiber.Ctx)) RequestHandlerOption {
+	return func(opts *RequestHandlerOptions) {
+		opts.PreHandlerEnable = true
+		opts.PreHandlerFunc = f
+	}
+}
+
+func WithPostHandlerFunc(f func(ctx *fiber.Ctx, b []byte)) RequestHandlerOption {
+	return func(opts *RequestHandlerOptions) {
+		opts.PostHandlerEnable = true
+		opts.PostHandlerFunc = f
+	}
+}
+
+func WithAuthentication() RequestHandlerOption {
+	return func(opts *RequestHandlerOptions) {
+		opts.VerifyTokenEnable = true
+	}
+}
+
 // Handle after the request handled. res type: transport.Response[T]
 func WithOnRequestHandledFunc(f func(ctx context.Context, res interface{})) RequestHandlerOption {
 	return func(opts *RequestHandlerOptions) {
@@ -93,9 +119,32 @@ func WithOnRequestHandledFunc(f func(ctx context.Context, res interface{})) Requ
 	}
 }
 
-func RequestHandlerWithDynamicTimeout[TReq any, TResp any](ctx *fiber.Ctx, msgDetailsTimeout string, opts ...RequestHandlerOption) error {
+func RequestHandlerWithDynamicTimeout[TReq any, TResp any](ctx *fiber.Ctx, opts ...RequestHandlerOption) error {
 	options := NewRequestHandlerOptions(opts...)
 
+	if options.PreHandlerEnable {
+		options.PreHandlerFunc(ctx)
+	}
+
+	if options.VerifyTokenEnable {
+		token := ctx.Cookies("jwt", "")
+		if token == "" {
+			httpResp := transport.GetResponse[TResp](
+				ctx.UserContext(),
+				transport.WithError(errorx.AuthenticationErrorWithDetails("Missing token", "")),
+			)
+			return ctx.Status(httpResp.Result.StatusCode).JSON(httpResp)
+		}
+
+		// Verify token here
+		if _, err := VerifyToken(token); err != nil {
+			httpResp := transport.GetResponse[TResp](
+				ctx.UserContext(),
+				transport.WithError(errorx.AuthenticationErrorWithDetails(err.Error(), "")),
+			)
+			return ctx.Status(httpResp.Result.StatusCode).JSON(httpResp)
+		}
+	}
 	var req transport.Request[TReq]
 	err := ctx.BodyParser(&req)
 	if err != nil {
@@ -126,7 +175,7 @@ func RequestHandlerWithDynamicTimeout[TReq any, TResp any](ctx *fiber.Ctx, msgDe
 
 	select {
 	case <-ctxWithTimeout.Done():
-		err := errorx.TimeoutErrorWithDetails(msgDetailsTimeout, "")
+		err := errorx.TimeoutErrorWithDetails(errorx.ErrorMessageTimeout, "")
 		httpResp := transport.GetResponse[TResp](
 			ctxWithTimeout,
 			transport.WithError(err),
@@ -139,9 +188,12 @@ func RequestHandlerWithDynamicTimeout[TReq any, TResp any](ctx *fiber.Ctx, msgDe
 		// Trigger hook when request handled
 		if options.OnRequestHandledFunc != nil {
 			options.OnRequestHandledFunc(ctx.UserContext(), resp)
-
 		}
 
+		if options.PostHandlerEnable {
+			b, _ := json.Marshal(resp)
+			options.PostHandlerFunc(ctx, b)
+		}
 		// Step 4: Send HTTP Response
 		return ctx.Status(resp.Result.StatusCode).JSON(resp)
 	}
