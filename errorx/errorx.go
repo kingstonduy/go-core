@@ -82,6 +82,8 @@ const (
 	ErrorCodeMethodNotAllowed    string = "09"
 	ErrorCodeConflict            string = "10"
 	ErrorCodeTooManyRequests     string = "11"
+	ErrorCodeNoRowAffected       string = "12"
+	ErrorAuthenticationError     string = "13"
 	ErrorCodeInternalServerError string = "999"
 
 	ErrorStatusSuccessful          int = http.StatusOK
@@ -96,6 +98,8 @@ const (
 	ErrorStatusMethodNotAllowed    int = http.StatusOK
 	ErrorStatusConflict            int = http.StatusOK
 	ErrorStatusTooManyRequests     int = http.StatusOK
+	ErrorStatusNoRowAffected       int = http.StatusOK
+	ErrorStatusAuthentication      int = http.StatusOK
 	ErrorStatusInternalServerError int = http.StatusInternalServerError
 
 	ErrorMessageSuccessful          string = "Successful"
@@ -110,6 +114,8 @@ const (
 	ErrorMessageMethodNotAllowed    string = "Method not allowed error"
 	ErrorMessageConflict            string = "Conflict error"
 	ErrorMessageTooManyRequests     string = "Too many request error"
+	ErrorMessageNoRowAffected       string = "No row affected"
+	ErrorMessagesAuthentication     string = "authentication error"
 	ErrorMessageInternalServerError string = "Internal server error"
 )
 
@@ -243,6 +249,29 @@ func TooManyRequestError(format string, a ...interface{}) *Error {
 func TooManyRequestErrorWithDetails(details interface{}, format string, a ...interface{}) *Error {
 	message := buildErrorMessage(ErrorMessageTooManyRequests, format, a...)
 	return NewErrorWithDetails(ErrorStatusTooManyRequests, ErrorCodeTooManyRequests, details, message)
+}
+
+// No row affected error
+func NoRowAffectedError(format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessageNoRowAffected, format, a...)
+	return NewError(ErrorStatusNoRowAffected, ErrorCodeNoRowAffected, message)
+}
+
+// No row affected error with details
+func NoRowAffectedErrorWithDetails(details interface{}, format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessageNoRowAffected, format, a...)
+	return NewErrorWithDetails(ErrorStatusNoRowAffected, ErrorCodeNoRowAffected, details, message)
+}
+
+func AuthenticationError(format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessagesAuthentication, format, a...)
+	return NewError(ErrorStatusAuthentication, ErrorAuthenticationError, message)
+}
+
+// authentication error with details
+func AuthenticationErrorWithDetails(details interface{}, format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessagesAuthentication, format, a...)
+	return NewErrorWithDetails(ErrorStatusAuthentication, ErrorAuthenticationError, details, message)
 }
 
 // Internal server error
