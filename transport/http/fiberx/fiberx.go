@@ -333,9 +333,10 @@ func NewFiberApp(opts ...FiberAppOption) *FiberApp {
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // Specify allowed methods
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowCredentials: true,                                     // Allow cookies and other credentials
+		AllowOrigins:     "http://localhost:5173",                  // Specify the allowed origin
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // Specify allowed methods
+		AllowHeaders:     "Origin, Content-Type, Accept",
 	}))
 
 	// Handle global panic

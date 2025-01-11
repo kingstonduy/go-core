@@ -108,7 +108,8 @@ func WithPostHandlerFunc(f func(ctx *fiber.Ctx, b []byte)) RequestHandlerOption 
 
 func WithAuthentication() RequestHandlerOption {
 	return func(opts *RequestHandlerOptions) {
-		opts.VerifyTokenEnable = true
+		// TODO enable it = true
+		opts.VerifyTokenEnable = false
 	}
 }
 

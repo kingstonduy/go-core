@@ -53,12 +53,12 @@ func (h *consumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 			}
 
 			p := &publication{brokerMessage: m, topic: msg.Topic, kafkaMessage: msg, consumerGroup: h.cg, session: session, timestamp: msg.Timestamp}
-			logger.Fields(
-				map[string]interface{}{
-					logger.FIELD_OPERATOR_NAME: p.topic,
-					logger.FIELD_STEP_NAME:     "message-received",
-				},
-			).Info(ctx, broker.MakeStringLogsKafka(ctx, *p.brokerMessage))
+			// logger.Fields(
+			// 	map[string]interface{}{
+			// 		logger.FIELD_OPERATOR_NAME: p.topic,
+			// 		logger.FIELD_STEP_NAME:     "message-received",
+			// 	},
+			// ).Info(ctx, broker.MakeStringLogsKafka(ctx, *p.brokerMessage))
 			err = h.handler(ctx, p)
 			if err == nil && h.subopts.AutoAck {
 				session.MarkMessage(msg, "")
