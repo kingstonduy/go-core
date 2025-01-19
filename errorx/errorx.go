@@ -84,6 +84,7 @@ const (
 	ErrorCodeTooManyRequests     string = "11"
 	ErrorCodeNoRowAffected       string = "12"
 	ErrorAuthenticationError     string = "13"
+	ErrorCodeSuspendedError      string = "14"
 	ErrorCodeInternalServerError string = "999"
 
 	ErrorStatusSuccessful          int = http.StatusOK
@@ -100,6 +101,7 @@ const (
 	ErrorStatusTooManyRequests     int = http.StatusOK
 	ErrorStatusNoRowAffected       int = http.StatusOK
 	ErrorStatusAuthentication      int = http.StatusOK
+	ErrorStatusSuspendedError      int = http.StatusOK
 	ErrorStatusInternalServerError int = http.StatusInternalServerError
 
 	ErrorMessageSuccessful          string = "Successful"
@@ -116,6 +118,7 @@ const (
 	ErrorMessageTooManyRequests     string = "Too many request error"
 	ErrorMessageNoRowAffected       string = "No row affected"
 	ErrorMessagesAuthentication     string = "authentication error"
+	ErrorMessageSuspendedError      string = "suspended error"
 	ErrorMessageInternalServerError string = "Internal server error"
 )
 
@@ -272,6 +275,18 @@ func AuthenticationError(format string, a ...interface{}) *Error {
 func AuthenticationErrorWithDetails(details interface{}, format string, a ...interface{}) *Error {
 	message := buildErrorMessage(ErrorMessagesAuthentication, format, a...)
 	return NewErrorWithDetails(ErrorStatusAuthentication, ErrorAuthenticationError, details, message)
+}
+
+// suspended error
+func SuspendedError(format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessageSuspendedError, format, a...)
+	return NewError(ErrorStatusSuspendedError, ErrorCodeSuspendedError, message)
+}
+
+// suspended error with details
+func SuspendedErrorWithDetails(details interface{}, format string, a ...interface{}) *Error {
+	message := buildErrorMessage(ErrorMessageSuspendedError, format, a...)
+	return NewErrorWithDetails(ErrorStatusSuspendedError, ErrorCodeSuspendedError, details, message)
 }
 
 // Internal server error
