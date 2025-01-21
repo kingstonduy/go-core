@@ -35,3 +35,18 @@ func (o *Outbox) ToString() string {
 	s, _ := json.Marshal(o)
 	return string(s)
 }
+
+func (o *Outbox) ToOutboxWithTrace() OutboxWithTrace {
+	res := OutboxWithTrace{
+		AggregateID: o.AggregateID,
+		CommandID:   o.CommandID,
+		CommandType: o.CommandType,
+		Payload:     o.Payload,
+		Trace:       transport.Trace{},
+		ReplyTo:     o.ReplyTo,
+		TraceParent: o.TraceParent,
+	}
+
+	json.Unmarshal([]byte(o.Trace), &res.Trace)
+	return res
+}

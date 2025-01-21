@@ -1,7 +1,7 @@
 # Makefile for Git tag operations
 
 # Default tag (can be overridden by passing TAG=your-tag)
-TAG = v0.0.7
+TAG = v0.0.8
 
 # Remote name (usually 'origin', but can be customized)
 REMOTE = origin
