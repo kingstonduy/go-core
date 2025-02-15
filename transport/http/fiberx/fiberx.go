@@ -333,9 +333,9 @@ func NewFiberApp(opts ...FiberAppOption) *FiberApp {
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowCredentials: true,                                     // Allow cookies and other credentials
-		AllowOrigins:     "http://localhost:5173",                  // Specify the allowed origin
-		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // Specify allowed methods
+		AllowCredentials: true,                                                  // Allow cookies and other credentials
+		AllowOrigins:     "http://localhost:5173,https://kingstonduy.github.io", // Specify the allowed origin
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",              // Specify allowed methods
 		AllowHeaders:     "Origin, Content-Type, Accept",
 	}))
 
